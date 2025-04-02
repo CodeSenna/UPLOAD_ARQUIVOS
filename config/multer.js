@@ -1,24 +1,24 @@
 // Importando para uploads de arquivos
-const multer = require("multer")
+const multer = require("multer");
 
-// Importando para manipulação de caminhos de arquivos (Windows)
-const path = require("path")
+// Importa o path para manipulação de caminhos de arquivos (Windows)
+const path = require("path");
 
-//  Configura o armazenamento dos arquivos com Multer
-const storange = multer.diskStorage({
-    // Função para definir o diretório de arquivos (Localização)
-    destination: function (req, file, cb) {
-        cb(null, "uploads/");
-    },
-    // Função para definir o nome dos arquivos (Nome único)
-    filename: function (req, file, cb) {
-        //  Define o nome do arquivo com a data e Entensão originl do arquivo
-        cb(null, Date.now() + path.extname(file.originalmente));
-    },
+// Configura o armazenamento dos arquivos com Multer
+const storage = multer.diskStorage({
+  // Função para definir o diretório dos arquivos (Localização)
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  // Função para definir o nome do arquivo
+  filename: function (req, file, cb) {
+    // Define o nome do arquivo com a data e Extensão original do arquivo
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
 
-// Configurando o middleware de Upload
+// Configurando o middleware de Upload 
 const upload = multer({ storage });
 
-// Exporta para utlizar em outros arquivos
+// Exporta para utilizar em outros arquivos
 module.exports = upload;

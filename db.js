@@ -1,24 +1,29 @@
 // Importa para interagir com o banco de dados
 const mongoose = require("mongoose");
 
-//  Carregar váriaveis de ambiente do arquivo .env
+// Carrega variáveis de ambiente do arquivo .ENV
 require("dotenv").config();
 
-// Configurar o mongoose para permitir consulta (Restritas)
+// Configura o mongoose para permitir consultas (Restritas)
 mongoose.set("strictQuery", true);
 
-// Função para conectar ao DB
-async function main () {
-    await mongoose.connect(
-        // Link do DB
-    );
+// Pega as variáveis de ambiente
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASS;
 
-    // Exibe a mensagem ao úsuario que realizou a conexão
-    console.log("Conectou ao banco de dados!");
+// Função para conectar ao DB
+async function main() {
+  await mongoose.connect(
+    // Link do DB com as variáveis de ambiente interpoladas corretamente
+    `mongodb+srv://${dbUser}:${dbPassword}@clusterapi.xnjzr.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAPI`
+  );
+
+  // Exibe a mensagem ao usuário que realizou a conexão
+  console.log("Conectou ao banco de dados!");
 }
 
-// Caso ocorra erro monstra uma mensagem
+// Caso ocorra erro, mostra uma mensagem
 main().catch((err) => console.log(err));
 
-// Exportar a função para utilizar em outro arquivo
+// Exporta a função para utilizar em outro arquivo
 module.exports = main;

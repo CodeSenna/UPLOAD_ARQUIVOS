@@ -1,11 +1,14 @@
-const express = require('express');
-const router = express.router();
+// Importando o express para manipular as rotas
+const express = require("express");
 
-// Importando o middlware de upload (Multer)
+// Criando um arquivo de rotas pelo Express
+const router = express.Router();
+
+// Importando o middleware de Upload (Multer)
 const upload = require("../config/multer");
 
-//  Controlador das imagens funções lógicas (get, post e etc...)
-const PictureController = require('../controller/PictureController');
+// Controlador das imagens funcões lógicas (GET, POST e ETC...)
+const PictureController = require("../controllers/PictureControllers");
 
 // Definindo a rota POST (Upload da Img e Armaz. no DB)
 router.post("/", upload.single("file"), PictureController.create);
