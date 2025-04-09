@@ -42,3 +42,18 @@ exports.findAll = async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar as imagens." });
   }
 };
+
+// Função para obter uma imagem especifica
+exports.getImage = async (res,res) => {
+  try {
+    const picture = await Picture.findById(req.params.id)
+
+    if (!picture) {
+      return res.status(404).json({ message: "Imagem não encontrada!"})
+    }
+    res.set("Content-Type", picture.contentType)
+    res.send(picture.image)
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar Imagem! "});
+  }
+};
