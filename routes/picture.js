@@ -16,8 +16,5 @@ router.post("/", upload.single("file"), PictureController.create);
 // Definindo a rota GET (Trazer todas as imagens do DB)
 router.get("/", PictureController.findAll);
 
-// Rota para obter uma imagem especifica 
-router.get("/:id/imagem", PictureController.getImage);
-
 // Exportando para utilizar em outro arquivo
 module.exports = router;

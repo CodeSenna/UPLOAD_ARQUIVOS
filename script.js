@@ -1,180 +1,116 @@
-// Elementos da interface (DOM)
 const elements = {
-    photoGrid: document.getElementById('photo-grid'), //Container da Grade de Fotos
-    uploadModal: document.getElementById('uploadModal'), // Modal de Upload
-    addPhotoButton: document.getElementById('addPhotoBtn'), // Botão para abrir o Modal
-    closeButton: document.querySelector('.close'), //Botão para fechar o Modal
-    uploadForm: document.getElementById('uploadForm'), // Upload do Formulário
-    toast: document.getElementById('toast'), // Elemento para notificação
-    nameInput: document.getElementById('name'), // Input nome da Foto
-    fileInput: document.getElementById('file'), // Input do arquivo da Foto
+    photoGrid: document.getElementById('photo-grid'),
+    uploadModal: document.getElementById('uploadModal'),
+    addPhotoButton: document.getElementById('addPhotoBtn'),
+    closeButton: document.querySelector('.close'),
+    uploadForm: document.getElementById('uploadForm'),
+    toast: document.getElementById('toast'),
+    nameInput: document.getElementById('name'),
+    fileInput: document.getElementById('file'),
 };
 
-// Configuração da Aplicação
 const config = {
-    apiUrl: "http://localhost:4000/picture",  //Endpoint da API
+    apiUrl: "http://localhost:4000/picture", 
 };
 
-application.use((req, res, next) => {
-    // Permite que qualquer origem, faça requisições para o servidor
-    res.header("Acess-COntrol-Allow-Origin", "*");
-    // Permite os Metodos get, post, delete
-    res.header("Acess-COntrol-Allow-Methods", "GET, POST, DELETE");
-    res.header("Acess-COntrol-Allow-Headers", "Content-Type")
-})
-
-// Função de notificação
 function showNotification(message, type = "sucess") {
-    const { toast } = elements; // Armazena o elemento de notificação
+    const { toast } = elements;
 
-    toast.textContent = message; // Define o texto da mensagem
-    toast.className = `toast ${type}`; // Aplica a Classe do CSS(COR)
-    toast.style.opacity = 1; // Torna a notificação visível
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    toast.style.opacity = 1;
 
-    // Configura o tempo para esconder a notificação (3 segundos)
     setTimeout(() => {
-        toast.style.opacity = 0; // Faz a notificação desaparecer devagar
+        toast.style.opacity = 0;
     }, 3000);
 };
 
-// Função de manipulação de fotos
 async function fetchphotos() {
     try {
-        // Faz requisição GET para a API
         const response = await fetch(config.apiUrl);
-        
-        // Verifica se a resposta foi bem sucedida (Status 200 ≠ 299 )
+ 
         if (!response.ok) {
             throw new Error(`Erro na requiseção: status ${response.status}`);
         }
-
-        // Coverte a resposta para JSON
         const data = await response.json();
-
-        //  Retorna o Array de fotos ou um vazio
         return data.pictures || [];
     } catch (error) {
-        // Em caso de erro, mostra no console
         console.error("falha ao carregar fotos", error);
-        // Função de notificação sendo chamada para monstrar erro ao User
         showNotification("falha ao carregar fotos", "error");
-        return []; // Retorna um Array vazio para evitar erros
+        return [];
+    
     };
 };
-
-// Renderiza as fotos no grid (Recebe um Array de objetos de fotos)
-function renderPhotoGrid(photos) {
-    const { photoGrid } = elements;
-
-    photoGrid.innerHTML = "" // Limpa todo o conteúdo atual do Grid
-
-    // Senão houver fotos, exibe mensagem
-    if (photos.lenght === 0 ) {
-        photoGrid.innerHTML = '<p class="no-photos">Nenhuma foto encontrada>';
-        return;
-    }
-    // Para cada foto no array, cria um card e adiciona ao grid
-    photos.forEach((photo) => {
-        const photoCard = createPhotoCardElement(photo);
-        photo.photoGrid.appendChild(photoCard);
-    });
-};
-
-// Criar o elemento HTML de um card de Foto (Recebe objeto de foto)
+ 
 function createPhotoCardElement(photo) {
-    const card = document.createElement("div"); 
-    card.className = "photo-card" // Aplica a classe CSS para estilos
-    
-    // Monta URL para a imagem (API + ID da foto +/image)
+    const card = document.createElement("div");
+    card.className = "photo-card"
+ 
     const imageUrl = `${config.apiUrl}/${photo._id}/image`
  
-    // Define o HTML interno do card com a image
     card.innerHTML = ``;
  
     return card;
 };
 
-// Envia nova foto para o servidor (Recebe FormData com nome e arquivo)
 async function uploadNewPhoto(formData) {
     try {
-        // Faz requisição POST para API com dados do formulário
         const response = await fetch(config.apiUrl, {
             method: "POST",
             body: formData,
         });
 
-        // Verifica a resposta 
         if(!response.ok) {
             throw new Error("Falha no upload da foto");
         }
 
-        // Notificação de sucesso para o User
         showNotification("Foto enviada com sucesso");
-        closeUploadModal(); // Fechar a tela do Modal
-        elements.uploadForm.reset(); // Função de resetar os campos
-        loadAndDisplayPhotos(); // Recarrega a lista de fotos (Nova Adição)
-    }   catch (error) {
-        // Mostrar em caso de erro no console
+        closeUploadModal();
+        elements.uploadForm.reset();
+        loadAndDisplayPhotos();
+    } catch (error) {
         console.error("Erro no upload:", error);
-        //  Notificação de Falha para o User
         showNotification("Falha ao enviar foto", "error");
     }
 };
 
-// Funções de controle da Interface
-
-// Abre o model de Upload (Mostra a janela de adicionar foto)
 function openUploadModal() {
-    elements.uploadModal.style.display = "block"; // Muda o CSS para block (Visivel)
+    elements.uploadModal.style.display = "block";   
 };
 
-// Fecha o modal de Upload (Esconde a Janela)
 function closeUploadModal() {
-    elements.uploadModal.style.display = "none"; // Muda o CSS para none (Invisível)
+    elements.uploadModal.style.display = "none";
 };
 
-// Fecha o modal ao clicar fora dele (event handler para clicks)
 function handleOutsideClick(event) {
-    // Verifica se o click foi modal (Área escura ao Redor)
     if (event.target === elements.uploadModal) {
         closeUploadModal();
     }
 };
 
-// Processa o envio do formulário
 function hadleFormSubmit(event) {
-    event.preventDefault(); // Impede o recarregamento da página
+    event.preventDefault();
 
-    // Criar um FormData com valores do formulário
     const formData = new FormData()
-    formData.append("name", elements.nameInput.value); // Adiciona o nome da foto
-    formData.append("file", elements.fileInput.files[0]); // Adiciona o arquivo selecionado
-    
-    uploadNewPhoto(formData); // Chama a função de Upload
+    formData.append("name", elements.nameInput.value);
+    formData.append("file", elements.fileInput.files[0]);
+
+    uploadNewPhoto(formData);
 };
 
-// Carrega e exibe todas as fotos (Função assíncrona principal)
 async function loadAndDisplayPhotos() {
-    const photos = await fetchphotos(); // Aguarda a busca das fotos
-    renderPhotoGrid(photos); // Renderiza as fotos no grid
+    const photos = await fetchphotos();
+    renderPhotoGrid(photos);
 };
 
-// Configura todos os eventos da Aplicação (centralizando a configuração)
 function setupEventListeners() {
-    // Botão "Adicionar foto", abre o modal
     elements.addPhotoButton.addEventListener("click", openUploadModal);
-    // Botão "X" fecha o modal
     elements.closeButton.addEventListener("click", closeUploadModal);
-    // Click fora do modal, fecha o modal
     window.addEventListener("click", handleOutsideClick);
-    // Submit do form. chama a função do upload
     elements.uploadForm.addEventListener("submit", hadleFormSubmit);
 };
 
-/* Inicialização da aplicação */
-
-// Inicia a aplicação quando o DOM estiver Pronto
 document.addEventListener("DOMContentLoaded", () => {
-    setupEventListeners(); // Configura todos os event`s
+    setupEventListeners();
     loadAndDisplayPhotos();
 });
