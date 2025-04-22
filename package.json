@@ -4,10 +4,10 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./app.js"
+    "start": "nodemon ./index.html"
   },
   "keywords": [],
-  "author": "Godoy",
+  "author": "Matheus",
   "license": "ISC",
   "description": "API - Upload de Imagens",
   "dependencies": {
