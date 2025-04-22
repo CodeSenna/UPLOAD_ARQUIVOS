@@ -14,7 +14,7 @@ async function main() {
   const dbPassword = process.env.DB_PASS;
  
   // Define o link de conexão com o MongoDB Atlas
-  const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@clusterapi.j79s3.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAPI`;
+  const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@clusterapi.xnjzr.mongodb.net/`;
  
   await mongoose.connect(mongoURI); // Adicionada URI correta
  
